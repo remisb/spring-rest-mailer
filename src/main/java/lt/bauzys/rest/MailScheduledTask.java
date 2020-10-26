@@ -11,10 +11,17 @@ import java.util.Date;
 @Component
 public class MailScheduledTask {
     private static final Logger log = LoggerFactory.getLogger(MailScheduledTask.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    @Scheduled(fixedRate = 2000)
+    private final QueuedMailService mailService;
+
+    public MailScheduledTask(QueuedMailService mailService) {
+        this.mailService = mailService;
+    }
+
+    @Scheduled(fixedRate = 1000 * 60 * 60) // run once per hour at the fixed rate.
     public void logTile() {
-        log.info("System time from MailScheduledTask {}", dateFormat.format(new Date()));
+        log.info("Mailing from mailing queue started at {}", dateFormat.format(new Date()));
+        mailService.mailFromQueue();
     }
 }
